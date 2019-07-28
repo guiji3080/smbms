@@ -16,6 +16,8 @@ public class Provider implements Serializable {
 	private Date creationDate;
 	private Integer modifyBy;
 	private Date modifyDate;
+	
+	private String aaa;
 	public Integer getId() {
 		return id;
 	}
