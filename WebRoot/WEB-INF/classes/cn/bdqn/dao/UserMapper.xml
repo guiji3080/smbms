@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.UserDao">
+
+	<!--根据id查询  -->
+	<select id="findById" parameterType="int" resultType="User">
+	SELECT 
+  `id`,
+  `userCode`,
+  `userName`,
+  `userPassword`,
+  `gender`,
+  `birthday`,
+  `phone`,
+  `address`,
+  `userRole`,
+  `createdBy`,
+  `creationDate`,
+  `modifyBy`,
+  `modifyDate` 
+FROM
+`smbms_user`
+where id=#{id} 
+	</select>
+	<!--分页的数量 -->
+	<select id="findCountByPage" resultType="int">
+		SELECT COUNT(U.id) FROM
+		smbms_user U INNER JOIN smbms_role R ON
+		U.userRole=R.id
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName LIKE CONCAT('%',#{userName},'%')
+			</if>
+			<if test="userRole!=null and userRole!=0">
+				AND userRole = #{userRole}
+			</if>
+		</where>
+	</select>
+
+	<!--分页的集合 -->
+	<select id="findByPage" resultType="User">
+		SELECT
+		U.id,
+		userCode,
+		userName,
+		userPassword,
+		gender,
+		birthday,
+		phone,
+		address,
+		userRole,
+		U.createdBy,
+		U.creationDate,
+		U.modifyBy,
+		U.modifyDate,
+		FLOOR(DATEDIFF(NOW(),birthday)/365) AS age,
+		R.roleName AS userRoleName
+		FROM
+		smbms_user U INNER JOIN smbms_role R ON U.userRole=R.id
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName LIKE CONCAT('%',#{userName},'%')
+			</if>
+			<if test="userRole!=null and userRole!=0">
+				AND userRole=#{userRole}
+			</if>
+		</where>
+		ORDER BY U.id
+		LIMIT #{from},#{pageSize}
+	</select>
+
+
+	<select id="findAll" resultType="User">
+		SELECT
+		U.id,
+		userCode,
+		userName,
+		userPassword,
+		gender,
+		birthday,
+		phone,
+		address,
+		userRole,
+		U.createdBy,
+		U.creationDate,
+		U.modifyBy,
+		U.modifyDate,
+		FLOOR(DATEDIFF(NOW(),birthday)/365) AS age,
+		R.roleName AS userRoleName
+		FROM
+		smbms_user U INNER JOIN smbms_role R ON U.userRole=R.id
+		ORDER BY
+		U.id
+	</select>
+
+	<select id="getToTalCount" resultType="int">
+		select count(id) from
+		smbms_user
+	</select>
+	<select id="findByCode" resultType="User">
+		SELECT id,
+		userCode,userName,userPassword, gender, birthday,phone, address,
+		userRole,
+		createdBy, creationDate, modifyBy, modifyDate FROM
+		smbms.smbms_user
+		WHERE userCode = #{userCode}
+
+	</select>
+	<update id="updateUser" parameterType="User">
+		UPDATE smbms_user
+		<set>
+			<if test="userCode!=null">
+				userCode = #{userCode},
+			</if>
+			<if test="userName!=null">
+				userName = #{userName} ,
+			</if>
+			<if test="userPassword!=null">
+				userPassword = #{userPassword} ,
+			</if>
+			<if test="gender!=null">
+				gender = #{gender},
+			</if>
+			<if test="birthday!=null">
+				birthday = #{birthday},
+			</if>
+			<if test="phone!=null">
+				phone = #{phone},
+			</if>
+			<if test="address!=null">
+				address = #{address},
+			</if>
+			<if test="userRole!=null">
+				userRole = #{userRole},
+			</if>
+			<if test="createdBy!=null">
+				createdBy = #{createdBy},
+			</if>
+			<if test="creationDate!=null">
+				creationDate = #{creationDate},
+			</if>
+			<if test="modifyBy!=null">
+				modifyBy = #{modifyBy},
+			</if>
+			<if test="modifyDate!=null">
+				modifyDate = #{modifyDate},
+			</if>			
+		</set>
+		WHERE id =#{id}
+	</update>
+	<insert id="addUser" parameterType="User">
+	INSERT INTO smbms_user ( userCode,userName,userPassword,gender,birthday,phone,address,userRole) 
+	VALUES(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole} ) 
+	
+	</insert>
+	<delete id="delUserById" parameterType="int">
+		DELETE FROM smbms_user 
+		WHERE id = #{id} ;
+		
+	
+	</delete>
+	
+	
+</mapper>

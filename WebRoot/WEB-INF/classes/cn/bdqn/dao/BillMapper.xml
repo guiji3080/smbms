@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.BillDao">
+	<select id="findAll" resultType="Bill">
+SELECT 
+   B.`id`,
+  `billCode`,
+  `productName`,
+  `productDesc`,
+  `productUnit`,
+  `productCount`,
+  `totalPrice`,
+  `isPayment`,
+  B.`createdBy`,
+  B.`creationDate`,
+  B.`modifyBy`,
+  B.`modifyDate`,
+  `providerId`, 
+  P.`proName` AS providerName
+FROM
+`smbms_bill` B
+INNER JOIN smbms_provider P
+ON B.`providerId`=P.`id`
+	</select>
+	
+<select id="findCountByPage" resultType="int">
+SELECT count(B.id) from smbms_bill B  inner join smbms_provider P
+ ON B.`providerId`=P.`id`
+<where>
+	<if test="productName!=null and productName!=''">
+	and productName like CONCAT('%',#{productName},'%')
+	</if>
+	<if test="providerId!=null and providerId!=0">
+	and providerId =#{providerId}
+	</if>
+	<if test="isPayment!=null and isPayment!=0">
+	and isPayment =#{isPayment}
+	</if>
+</where>
+</select>
+
+<select id="findByPage" resultType="Bill">
+SELECT 
+   B.`id`,
+  `billCode`,
+  `productName`,
+  `productDesc`,
+  `productUnit`,
+  `productCount`,
+  `totalPrice`,
+  `isPayment`,
+  B.`createdBy`,
+  B.`creationDate`,
+  B.`modifyBy`,
+  B.`modifyDate`,
+  `providerId`, 
+  P.`proName` AS providerName
+FROM
+`smbms_bill` B
+INNER JOIN smbms_provider P
+ON B.`providerId`=P.`id`
+<where>
+	<if test="productName!=null and productName!=''">
+	and productName like CONCAT('%',#{productName},'%')
+	</if>
+	<if test="providerId!=null and providerId!=0">
+	and providerId =#{providerId}
+	</if>
+	<if test="isPayment!=null and isPayment!=0">
+	and isPayment =#{isPayment}
+	</if>
+</where>
+ORDER BY B.id
+LIMIT #{from},#{pageSize}
+</select>
+
+<insert id="addBill" parameterType="Bill">
+INSERT INTO 
+smbms_bill(billCode,productName,productUnit,productCount,providerId,isPayment) 
+VALUES
+(#{billCode},#{productName},#{productUnit},#{productCount},#{providerId},#{isPayment})
+</insert>
+	
+	<select id="finById" resultType="Bill">
+	SELECT 
+   B.`id`,
+  `billCode`,
+  `productName`,
+  `productDesc`,
+  `productUnit`,
+  `productCount`,
+  `totalPrice`,
+  `isPayment`,
+  B.`createdBy`,
+  B.`creationDate`,
+  B.`modifyBy`,
+  B.`modifyDate`,
+  `providerId`, 
+  P.`proName` AS providerName
+FROM
+`smbms_bill` B
+INNER JOIN smbms_provider P
+ON B.`providerId`=P.`id`
+where id=#{billid}
+	</select>
+	
+	<delete id="delBill" parameterType="int">
+	DELETE 
+FROM
+  `smbms_bill` 
+WHERE `id` =#{billid}
+	
+	</delete>
+	
+</mapper>
